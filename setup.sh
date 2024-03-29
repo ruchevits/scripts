@@ -52,8 +52,12 @@ function print_intro() {
 function print_step_info() {
     print_line_blue "                                                                 "
     print_line_blue "-----------------------------------------------------------------"
-    print_line_green "\n$1\n"
+    print_line_blue "                                                                 "
+    if [ ! -z "$2" ]; then
+        print_line_green "$2\n"
+    fi
     # read -s -k $'?Press any key to continue\n\n'
+    $1
 }
 
 function print_manual_action_required() {
@@ -188,142 +192,138 @@ function dock_add_spacer() {
 
 ########################################################################################################################
 
-print_intro
+function step_xcode() {
+    xcode-select -p &>/dev/null
+    if [[ $? == 0 ]]; then
+        echo "Already installed"
+    else
+        xcode-select --install
+        MANUAL_STEP_XCODE_SETUP=(
+            "Install XCode"
+        )
+        print_manual_action_required "${MANUAL_STEP_XCODE_SETUP[@]}"
+    fi
+
+}
 
 ########################################################################################################################
 
-print_step_info "Installing XCode developer tools"
+function step_homebrew() {
+    if [[ $+commands[brew] != 0 ]]; then
+        echo "Already installed"
+    else
+        # NONINTERACTIVE=1
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
 
-xcode-select -p &>/dev/null
-if [[ $? == 0 ]]; then
-    echo "Already installed"
-else
-    xcode-select --install
-    MANUAL_STEP_XCODE_SETUP=(
-        "Install XCode"
-    )
-    print_manual_action_required "${MANUAL_STEP_XCODE_SETUP[@]}"
-fi
-
-########################################################################################################################
-
-print_step_info "Installing Homebrew"
-
-if [[ $+commands[brew] != 0 ]]; then
-    echo "Already installed"
-else
-    # NONINTERACTIVE=1
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-fi
-
-# Update Homebrew recipes
-print_step_info "Updating Homebrew"
-brew update
+    # Update Homebrew recipes
+    echo ""
+    brew update
+}
 
 ########################################################################################################################
 
-print_step_info "Installing 1Password"
+function step_1password() {
+    brew_install '1password-cli'
+    BREW_INSTALLED_1PASSWORD_CLI=$?
 
-brew_install '1password-cli'
-BREW_INSTALLED_1PASSWORD_CLI=$?
+    brew_install_cask '1password' "/Applications"
+    BREW_INSTALLED_1PASSWORD=$?
 
-brew_install_cask '1password' "/Applications"
-BREW_INSTALLED_1PASSWORD=$?
+    brew_cleanup $(($BREW_INSTALLED_1PASSWORD_CLI | $BREW_INSTALLED_1PASSWORD))
 
-brew_cleanup $(($BREW_INSTALLED_1PASSWORD_CLI | $BREW_INSTALLED_1PASSWORD))
+    if [[ $BREW_INSTALLED_1PASSWORD == 1 ]]; then
+        open /Applications/1Password.app
 
-if [[ $BREW_INSTALLED_1PASSWORD == 1 ]]; then
-    open /Applications/1Password.app
-
-    MANUAL_ACTION_1PASSWORD=(
-        "Sign in to 1Password app"
-        "Go to 1Password \\u2192 Settings \\u2192 Developer"
-        "Tick checkbox 'Use the SSH agent' and allow 1Password to update ~/.ssh/config file"
-        "Tick checkbox 'Integrate with 1Password CLI'"
-    )
-    print_manual_action_required ${MANUAL_ACTION_1PASSWORD[@]}
-fi
+        MANUAL_ACTION_1PASSWORD=(
+            "Sign in to 1Password app"
+            "Go to 1Password \\u2192 Settings \\u2192 Developer"
+            "Tick checkbox 'Use the SSH agent' and allow 1Password to update ~/.ssh/config file"
+            "Tick checkbox 'Integrate with 1Password CLI'"
+        )
+        print_manual_action_required ${MANUAL_ACTION_1PASSWORD[@]}
+    fi
+}
 
 ########################################################################################################################
 
-print_step_info "Installing Git"
+function step_git() {
+    brew_install "git"
+    BREW_INSTALLED_GIT=$?
 
-brew_install "git"
-BREW_INSTALLED_GIT=$?
+    # https://github.com/tj/git-extras/blob/main/Commands.md
+    brew_install git-extras
+    BREW_INSTALLED_GIT_EXTRAS=$?
 
-print_step_info "Installing Git utilities"
+    brew_install tree
+    BREW_INSTALLED_TREE=$?
 
-# https://github.com/tj/git-extras/blob/main/Commands.md
-brew_install git-extras
-BREW_INSTALLED_GIT_EXTRAS=$?
+    brew_install defaultbrowser
+    BREW_INSTALLED_DEFAULTBROWSER=$?
 
-brew_install tree
-BREW_INSTALLED_TREE=$?
+    brew_cleanup $(($BREW_INSTALLED_GIT | $BREW_INSTALLED_GIT_EXTRAS | $BREW_INSTALLED_TREE | $BREW_INSTALLED_DEFAULTBROWSER))
 
-brew_install defaultbrowser
-BREW_INSTALLED_DEFAULTBROWSER=$?
-
-brew_cleanup $(($BREW_INSTALLED_GIT | $BREW_INSTALLED_GIT_EXTRAS | $BREW_INSTALLED_TREE | $BREW_INSTALLED_DEFAULTBROWSER))
+}
 
 ########################################################################################################################
 
 # TODO: install more fonts!
-print_step_info "Installing fonts"
+function step_fonts() {
+    brew tap homebrew/cask-fonts
 
-brew tap homebrew/cask-fonts
+    # https://github.com/Homebrew/homebrew-cask-fonts/tree/master/Casks
+    brew_install_cask homebrew/cask-fonts/font-meslo-lg-nerd-font
+    BREW_INSTALLED_FONT_MESLO_LG_NERD_FONT=$?
 
-# https://github.com/Homebrew/homebrew-cask-fonts/tree/master/Casks
-brew_install_cask homebrew/cask-fonts/font-meslo-lg-nerd-font
-BREW_INSTALLED_FONT_MESLO_LG_NERD_FONT=$?
-
-# TODO: brew_cleanup?
-
-########################################################################################################################
-
-print_step_info "Installing utilities"
-
-brew_install tree
-BREW_INSTALLED_TREE=$?
-
-brew_install wget
-BREW_INSTALLED_WGET=$?
-
-brew_install trash
-BREW_INSTALLED_TRASH=$?
-
-brew_install openssl@3
-BREW_INSTALLED_OPENSSL=$?
-
-brew_install sqlite
-BREW_INSTALLED_SQLITE=$?
-
-brew_install xz
-BREW_INSTALLED_XZ=$?
-
-brew_cleanup $(($BREW_INSTALLED_TREE | $BREW_INSTALLED_WGET | $BREW_INSTALLED_TRASH | $BREW_INSTALLED_OPENSSL | $BREW_INSTALLED_SQLITE | $BREW_INSTALLED_XZ))
+    # TODO: brew_cleanup?
+}
 
 ########################################################################################################################
 
-print_step_info "Installing Volta"
+function step_utilities() {
+    brew_install tree
+    BREW_INSTALLED_TREE=$?
 
-which ~/.volta/bin/volta &>/dev/null
-if [[ $? == 0 ]]; then
-    echo "Already installed"
-else
-    # https://volta.sh/
-    curl https://get.volta.sh | bash -s -- --skip-setup
-fi
+    brew_install wget
+    BREW_INSTALLED_WGET=$?
 
-export VOLTA_HOME="$HOME/.volta"
-# export VOLTA_FEATURE_PNPM="1"
-export PATH="$VOLTA_HOME/bin:$PATH"
+    brew_install trash
+    BREW_INSTALLED_TRASH=$?
+
+    brew_install openssl@3
+    BREW_INSTALLED_OPENSSL=$?
+
+    brew_install sqlite
+    BREW_INSTALLED_SQLITE=$?
+
+    brew_install xz
+    BREW_INSTALLED_XZ=$?
+
+    brew_cleanup $(($BREW_INSTALLED_TREE | $BREW_INSTALLED_WGET | $BREW_INSTALLED_TRASH | $BREW_INSTALLED_OPENSSL | $BREW_INSTALLED_SQLITE | $BREW_INSTALLED_XZ))
+}
 
 ########################################################################################################################
 
-print_step_info "Installing Node and PNPM"
+function step_volta() {
+    which ~/.volta/bin/volta &>/dev/null
+    if [[ $? == 0 ]]; then
+        echo "Already installed"
+    else
+        # https://volta.sh/
+        curl https://get.volta.sh | bash -s -- --skip-setup
+    fi
 
-volta install node
-volta install pnpm
+    export VOLTA_HOME="$HOME/.volta"
+    # export VOLTA_FEATURE_PNPM="1"
+    export PATH="$VOLTA_HOME/bin:$PATH"
+}
+
+########################################################################################################################
+
+function step_javascript() {
+    volta install node
+    volta install pnpm
+}
 
 ########################################################################################################################
 
@@ -334,55 +334,55 @@ volta install pnpm
 
 ########################################################################################################################
 
-print_step_info "Installing Oh My ZSH"
-
-# Install Oh My Zsh
-if [ -d ~/.oh-my-zsh ]; then
-    echo "Already installed"
-else
-    # TODO: verify unattended works well
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-fi
-
-########################################################################################################################
-
-print_step_info "Installing zsh theme"
-
-brew_install powerlevel10k
-BREW_INSTALLED_POWERLEVEL10K=$?
-
-# Link powerlevel10k theme
-# https://unix.stackexchange.com/questions/207294/create-symlink-overwrite-if-one-exists
-ln -sfn "/usr/local/share/powerlevel10k/powerlevel10k.zsh-theme" ~/.oh-my-zsh/custom/themes/powerlevel10k.zsh-theme
-
-brew_cleanup $(($BREW_INSTALLED_POWERLEVEL10K))
+function step_omz() {
+    # Install Oh My Zsh
+    if [ -d ~/.oh-my-zsh ]; then
+        echo "Already installed"
+    else
+        # TODO: verify unattended works well
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    fi
+}
 
 ########################################################################################################################
 
-print_step_info "Installing zsh plugins"
+function step_zsh_theme() {
+    brew_install powerlevel10k
+    BREW_INSTALLED_POWERLEVEL10K=$?
 
-# Syntax hightlighting tool (needed for zsh colorize plugin)
-brew_install chroma
-BREW_INSTALLED_CHROMA=$?
+    # Link powerlevel10k theme
+    # https://unix.stackexchange.com/questions/207294/create-symlink-overwrite-if-one-exists
+    ln -sfn "/usr/local/share/powerlevel10k/powerlevel10k.zsh-theme" ~/.oh-my-zsh/custom/themes/powerlevel10k.zsh-theme
 
-# Install zsh plugins
-install_zsh_plugin zsh-autosuggestions "https://github.com/zsh-users/zsh-autosuggestions"
-install_zsh_plugin zsh-syntax-highlighting "https://github.com/zsh-users/zsh-syntax-highlighting"
-
-brew_cleanup $(($BREW_INSTALLED_CHROMA))
+    brew_cleanup $(($BREW_INSTALLED_POWERLEVEL10K))
+}
 
 ########################################################################################################################
 
-# Install iTerm2
-print_step_info "Installing iTerm2"
-brew_install_cask iterm2 "/Applications/Utilities"
-BREW_INSTALLED_ITERM2=$?
+function step_zsh_plugins() {
+    # Syntax hightlighting tool (needed for zsh colorize plugin)
+    brew_install chroma
+    BREW_INSTALLED_CHROMA=$?
 
-# https://github.com/TomAnthony/itermocil
-brew_install "TomAnthony/brews/itermocil"
-BREW_INSTALLED_ITERMOCIL=$?
+    # Install zsh plugins
+    install_zsh_plugin zsh-autosuggestions "https://github.com/zsh-users/zsh-autosuggestions"
+    install_zsh_plugin zsh-syntax-highlighting "https://github.com/zsh-users/zsh-syntax-highlighting"
 
-brew_cleanup $(($BREW_INSTALLED_ITERM2 | $BREW_INSTALLED_ITERMOCIL))
+    brew_cleanup $(($BREW_INSTALLED_CHROMA))
+}
+
+########################################################################################################################
+
+function step_iterm2() {
+    brew_install_cask iterm2 "/Applications/Utilities"
+    BREW_INSTALLED_ITERM2=$?
+
+    # https://github.com/TomAnthony/itermocil
+    brew_install "TomAnthony/brews/itermocil"
+    BREW_INSTALLED_ITERMOCIL=$?
+
+    brew_cleanup $(($BREW_INSTALLED_ITERM2 | $BREW_INSTALLED_ITERMOCIL))
+}
 
 ########################################################################################################################
 
@@ -391,95 +391,94 @@ brew_cleanup $(($BREW_INSTALLED_ITERM2 | $BREW_INSTALLED_ITERMOCIL))
 
 ########################################################################################################################
 
-print_step_info "Installing applications"
+function step_applications() {
+    brew_install_cask spotify "/Applications"
+    BREW_INSTALLED_SPOTIFY=$?
 
-brew_install_cask spotify "/Applications"
-BREW_INSTALLED_SPOTIFY=$?
+    brew_install_cask vlc "/Applications"
+    BREW_INSTALLED_VLC=$?
 
-brew_install_cask vlc "/Applications"
-BREW_INSTALLED_VLC=$?
+    brew_install_cask google-chrome "/Applications"
+    BREW_INSTALLED_GOOGLE_CHROME=$?
 
-brew_install_cask google-chrome "/Applications"
-BREW_INSTALLED_GOOGLE_CHROME=$?
+    brew_install_cask firefox "/Applications"
+    BREW_INSTALLED_FIREFOX=$?
 
-brew_install_cask firefox "/Applications"
-BREW_INSTALLED_FIREFOX=$?
+    brew_install_cask google-drive "/Applications"
+    BREW_INSTALLED_GOOGLE_DRIVE=$?
 
-brew_install_cask google-drive "/Applications"
-BREW_INSTALLED_GOOGLE_DRIVE=$?
+    brew_install_cask notion "/Applications"
+    BREW_INSTALLED_NOTION=$?
 
-brew_install_cask notion "/Applications"
-BREW_INSTALLED_NOTION=$?
+    brew_install_cask notion-calendar "/Applications"
+    BREW_INSTALLED_NOTION_CALENDAR=$?
 
-brew_install_cask notion-calendar "/Applications"
-BREW_INSTALLED_NOTION_CALENDAR=$?
+    brew_install_cask slack "/Applications"
+    BREW_INSTALLED_SLACK=$?
 
-brew_install_cask slack "/Applications"
-BREW_INSTALLED_SLACK=$?
+    brew_install_cask telegram "/Applications"
+    BREW_INSTALLED_TELEGRAM=$?
 
-brew_install_cask telegram "/Applications"
-BREW_INSTALLED_TELEGRAM=$?
+    brew_install_cask figma "/Applications"
+    BREW_INSTALLED_FIGMA=$?
 
-brew_install_cask figma "/Applications"
-BREW_INSTALLED_FIGMA=$?
+    brew_install_cask postico "/Applications"
+    BREW_INSTALLED_POSTICO=$?
 
-brew_install_cask postico "/Applications"
-BREW_INSTALLED_POSTICO=$?
+    brew_install_cask rapidapi "/Applications"
+    BREW_INSTALLED_RAPIDAPI=$?
 
-brew_install_cask rapidapi "/Applications"
-BREW_INSTALLED_RAPIDAPI=$?
+    brew_install_cask visual-studio-code "/Applications"
+    BREW_INSTALLED_VSCODE=$?
 
-brew_install_cask visual-studio-code "/Applications"
-BREW_INSTALLED_VSCODE=$?
+    brew_install_cask hammerspoon "/Applications/Utilities"
+    BREW_INSTALLED_HAMMERSPOON=$?
 
-brew_install_cask hammerspoon "/Applications/Utilities"
-BREW_INSTALLED_HAMMERSPOON=$?
-
-# Force cleanup
-brew_cleanup 1
+    # Force cleanup
+    brew_cleanup 1
+}
 
 ########################################################################################################################
 
-print_step_info "Installing VSCode extensions"
+function step_vscode_extensions() {
+    VSCODE_EXTENSIONS=(
+        "esbenp.prettier-vscode"
+    )
 
-VSCODE_EXTENSIONS=(
-    "esbenp.prettier-vscode"
-)
-
-if [[ $+commands[code] != 0 ]]; then
-    for i in "${VSCODE_EXTENSIONS[@]}"; do
-        install_vscode_extension $i
-    done
-fi
+    if [[ $+commands[code] != 0 ]]; then
+        for i in "${VSCODE_EXTENSIONS[@]}"; do
+            install_vscode_extension $i
+        done
+    fi
+}
 
 ########################################################################################################################
 
 # TODO: dependencies for mackup: mpdecimal, ca-certificates, openssl@3, readline, sqlite, xz and python@3.12
-print_step_info "Installing Mackup"
+function step_mackup() {
+    # https://github.com/lra/mackup
+    brew_install mackup
+    BREW_INSTALLED_MACKUP=$?
 
-# https://github.com/lra/mackup
-brew_install mackup
-BREW_INSTALLED_MACKUP=$?
-
-brew_cleanup $(($BREW_INSTALLED_MACKUP))
+    brew_cleanup $(($BREW_INSTALLED_MACKUP))
+}
 
 ########################################################################################################################
 
-print_step_info "Fetching Mackup configuration"
+function step_config() {
+    # Symlink
+    if [[ $+commands[mackup] != 0 ]]; then
 
-# Symlink
-if [[ $+commands[mackup] != 0 ]]; then
+        if [ -d ~/Mackup ]; then
+            echo "Existing Mackup directory found\n"
+            mackup uninstall -f
+            rm -rf ~/Mackup
+        fi
 
-    if [ -d ~/Mackup ]; then
-        echo "Existing Mackup directory found\n"
-        mackup uninstall -f
-        rm -rf ~/Mackup
-    fi
+        git clone git@github.com:ruchevits/setup-macos.git ~/Mackup
 
-    git clone git@github.com:ruchevits/setup-macos.git ~/Mackup
-
-    # TODO: refactor
-    echo "[storage]
+        # TODO: refactor
+        echo "[storage]
 engine = file_system
 path =
 directory = Mackup
@@ -499,71 +498,97 @@ aws
 postico
 vscode" >~/.mackup.cfg
 
-    mackup restore -f
-    # mackup uninstall
+        mackup restore -f
+        # mackup uninstall
+    fi
+}
+
+########################################################################################################################
+
+function step_macos_dock() {
+
+    # Configure dock (https://developer.apple.com/documentation/devicemanagement/dock)
+
+    defaults delete com.apple.dock
+
+    defaults write com.apple.dock orientation -string bottom
+    defaults write com.apple.dock tilesize -integer 64
+
+    defaults write com.apple.dock size-immutable -bool true
+    defaults write com.apple.dock position-immutable -bool true
+    defaults write com.apple.dock contents-immutable -bool true
+    defaults write com.apple.dock showrecents-immutable -bool true
+
+    defaults write com.apple.dock static-only -bool true
+    defaults write com.apple.dock show-recents -bool false
+
+    defaults write com.apple.dock static-apps -array
+    defaults write com.apple.dock static-others -array
+    defaults write com.apple.dock persistent-apps -array
+    defaults write com.apple.dock persistent-others -array
+
+    dock_add_app static-apps "/Applications/Spotify.app"
+    # dock_add_app static-apps "/Applications/VLC.app"
+
+    dock_add_spacer static-apps flex-spacer-tile
+
+    dock_add_app static-apps "/Applications/Utilities/iTerm.app"
+
+    dock_add_spacer static-apps small-spacer-tile
+
+    dock_add_app static-apps "/Applications/Google Chrome.app"
+    dock_add_app static-apps "/Applications/Firefox.app"
+
+    dock_add_spacer static-apps small-spacer-tile
+
+    dock_add_app static-apps "/Applications/Notion Calendar.app"
+    dock_add_app static-apps "/Applications/Notion.app"
+    dock_add_app static-apps "/Applications/Slack.app"
+    dock_add_app static-apps "/Applications/Telegram.app"
+    dock_add_app static-apps "/Applications/Figma.app"
+
+    dock_add_spacer static-apps small-spacer-tile
+
+    dock_add_app static-apps "/Applications/Postico 2.app"
+    dock_add_app static-apps "/Applications/RapidAPI.app"
+    dock_add_app static-apps "/Applications/Visual Studio Code.app"
+
+    dock_add_spacer static-apps flex-spacer-tile
+
+    dock_add_directory static-others /Users/johndoe/Downloads/
+    # dock_add_directory static-others "/Users/johndoe/Library/CloudStorage/GoogleDrive-ruchevits@gmail.com"
+    # dock_add_directory static-others "/Users/johndoe/Library/CloudStorage/GoogleDrive-edward@ruchevits.com"
+
+    # Mission Control
+    defaults write com.apple.dock "mru-spaces" -bool "false"
+
+    killall Dock
+}
+
+########################################################################################################################
+
+print_intro
+
+if [ -z "$1" ]; then
+    # print_step_info step_xcode "Installing XCode developer tools"
+    # print_step_info step_homebrew "Installing Homebrew"
+    # print_step_info step_1password "Installing 1Password"
+    # print_step_info step_git "Installing Git"
+    # print_step_info step_fonts "Installing fonts"
+    # print_step_info step_utilities "Installing utilities"
+    # print_step_info step_volta "Installing Volta"
+    # print_step_info step_javascript "Installing JavaScript tools"
+    # print_step_info step_omz "Installing Oh My ZSH"
+    # print_step_info step_zsh_theme "Installing zsh theme"
+    # print_step_info step_zsh_plugins "Installing zsh plugins"
+    # print_step_info step_iterm2 "Installing iTerm2"
+    # print_step_info step_applications "Installing applications"
+    # print_step_info step_vscode_extensions "Installing VSCode extensions"
+    # print_step_info step_mackup "Installing Mackup"
+    # print_step_info step_config "Fetching configuration"
+    # print_step_info step_macos_dock "Configuring MacOS Dock"
+else
+    print_step_info $1
 fi
-
-########################################################################################################################
-
-print_step_info "Configuring MacOS Dock"
-
-# Configure dock (https://developer.apple.com/documentation/devicemanagement/dock)
-
-defaults delete com.apple.dock
-
-defaults write com.apple.dock orientation -string bottom
-defaults write com.apple.dock tilesize -integer 64
-
-defaults write com.apple.dock size-immutable -bool true
-defaults write com.apple.dock position-immutable -bool true
-defaults write com.apple.dock contents-immutable -bool true
-defaults write com.apple.dock showrecents-immutable -bool true
-
-defaults write com.apple.dock static-only -bool true
-defaults write com.apple.dock show-recents -bool false
-
-defaults write com.apple.dock static-apps -array
-defaults write com.apple.dock static-others -array
-defaults write com.apple.dock persistent-apps -array
-defaults write com.apple.dock persistent-others -array
-
-dock_add_app static-apps "/Applications/Spotify.app"
-# dock_add_app static-apps "/Applications/VLC.app"
-
-dock_add_spacer static-apps flex-spacer-tile
-
-dock_add_app static-apps "/Applications/Utilities/iTerm.app"
-
-dock_add_spacer static-apps small-spacer-tile
-
-dock_add_app static-apps "/Applications/Google Chrome.app"
-dock_add_app static-apps "/Applications/Firefox.app"
-
-dock_add_spacer static-apps small-spacer-tile
-
-dock_add_app static-apps "/Applications/Notion Calendar.app"
-dock_add_app static-apps "/Applications/Notion.app"
-dock_add_app static-apps "/Applications/Slack.app"
-dock_add_app static-apps "/Applications/Telegram.app"
-dock_add_app static-apps "/Applications/Figma.app"
-
-dock_add_spacer static-apps small-spacer-tile
-
-dock_add_app static-apps "/Applications/Postico 2.app"
-dock_add_app static-apps "/Applications/RapidAPI.app"
-dock_add_app static-apps "/Applications/Visual Studio Code.app"
-
-dock_add_spacer static-apps flex-spacer-tile
-
-dock_add_directory static-others /Users/johndoe/Downloads/
-# dock_add_directory static-others "/Users/johndoe/Library/CloudStorage/GoogleDrive-ruchevits@gmail.com"
-# dock_add_directory static-others "/Users/johndoe/Library/CloudStorage/GoogleDrive-edward@ruchevits.com"
-
-# Mission Control
-defaults write com.apple.dock "mru-spaces" -bool "false"
-
-killall Dock
-
-########################################################################################################################
 
 print_done
