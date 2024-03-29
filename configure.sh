@@ -68,7 +68,7 @@ function step_config() {
         else
             mkdir ~/.ssh
             echo "Host *
-	IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"%" >~/.ssh/config
+	IdentityAgent \"~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock\"" >~/.ssh/config
         fi
 
         git clone git@github.com:ruchevits/setup-macos.git ~/Mackup
