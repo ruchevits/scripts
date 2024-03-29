@@ -170,3 +170,7 @@ else
     )
     print_manual_action_required "${MANUAL_STEP_XCODE_SETUP[@]}"
 fi
+
+########################################################################################################################
+
+print_step_info "Installing Homebrew"
