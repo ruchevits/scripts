@@ -373,7 +373,7 @@ BREW_INSTALLED_ITERM2=$?
 brew_install "TomAnthony/brews/itermocil"
 BREW_INSTALLED_ITERMOCIL=$?
 
-brew_cleanup $(($$BREW_INSTALLED_ITERM2 | $BREW_INSTALLED_ITERMOCIL))
+brew_cleanup $(($BREW_INSTALLED_ITERM2 | $BREW_INSTALLED_ITERMOCIL))
 
 ########################################################################################################################
 
