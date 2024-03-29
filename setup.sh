@@ -130,7 +130,7 @@ function brew_cleanup() {
 
 function install_zsh_plugin() {
     if [ -d ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/$1 ]; then
-        echo "zsh plugin is already installed: $1"
+        echo "Zsh plugin is already installed: $1"
     else
         git clone $2 ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/$1
     fi
@@ -364,7 +364,7 @@ function step_zsh_plugins() {
     brew_install chroma
     BREW_INSTALLED_CHROMA=$?
 
-    # Install zsh plugins
+    # Install Zsh plugins
     install_zsh_plugin zsh-autosuggestions "https://github.com/zsh-users/zsh-autosuggestions"
     install_zsh_plugin zsh-syntax-highlighting "https://github.com/zsh-users/zsh-syntax-highlighting"
 
@@ -568,9 +568,9 @@ if [ -z "$1" ]; then
     print_step_info step_utilities "Installing utilities"
     print_step_info step_volta "Installing Volta"
     print_step_info step_javascript "Installing JavaScript tools"
-    print_step_info step_omz "Installing Oh My ZSH"
-    print_step_info step_zsh_theme "Installing zsh theme"
-    print_step_info step_zsh_plugins "Installing zsh plugins"
+    print_step_info step_omz "Installing Oh My Zsh"
+    print_step_info step_zsh_theme "Installing Zsh theme"
+    print_step_info step_zsh_plugins "Installing Zsh plugins"
     print_step_info step_iterm2 "Installing iTerm2"
     print_step_info step_applications "Installing applications"
     print_step_info step_vscode_extensions "Installing VSCode extensions"
