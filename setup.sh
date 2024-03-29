@@ -160,7 +160,8 @@ print_intro
 
 print_step_info "Installing XCode developer tools"
 
-if command -v xcode-select &>/dev/null; then
+xcode-select -p 1>/dev/null
+if [[ $? == 2 ]]; then
     echo "Already installed"
 else
     xcode-select --install
