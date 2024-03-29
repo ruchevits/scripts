@@ -12,9 +12,9 @@ cd $TMPDIR
 cp -r payload.*/ .
 rm -rf payload.*/
 
-echo "\nConfiguring file permissions"
-sudo chmod +x *.sh
-sudo chown root:wheel *
+# echo "\nConfiguring file permissions"
+# sudo chmod +x *.sh
+# sudo chown root:wheel *
 
 echo "\nRunning script"
 clear

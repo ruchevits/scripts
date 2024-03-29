@@ -1,28 +1,28 @@
 #!/bin/zsh
 
-source ./utils_colours.sh
-source ./utils_brew.sh
-source ./utils_zsh.sh
-source ./utils_vscode.sh
-source ./utils_dock.sh
+source ./utils/utils_colours.sh
+source ./utils/utils_brew.sh
+source ./utils/utils_zsh.sh
+source ./utils/utils_vscode.sh
+source ./utils/utils_dock.sh
 
-source ./step_xcode.sh
-source ./step_homebrew.sh
-source ./step_1password.sh
-source ./step_git.sh
-source ./step_fonts.sh
-source ./step_utilities.sh
-source ./step_volta.sh
-source ./step_javascript.sh
-source ./step_omz.sh
-source ./step_zsh_theme.sh
-source ./step_zsh_plugins.sh
-source ./step_iterm2.sh
-source ./step_applications.sh
-source ./step_vscode_extensions.sh
-source ./step_mackup.sh
-source ./step_config.sh
-source ./step_macos_dock.sh
+source ./steps/step_xcode.sh
+source ./steps/step_homebrew.sh
+source ./steps/step_1password.sh
+source ./steps/step_git.sh
+source ./steps/step_fonts.sh
+source ./steps/step_utilities.sh
+source ./steps/step_volta.sh
+source ./steps/step_javascript.sh
+source ./steps/step_omz.sh
+source ./steps/step_zsh_theme.sh
+source ./steps/step_zsh_plugins.sh
+source ./steps/step_iterm2.sh
+source ./steps/step_applications.sh
+source ./steps/step_vscode_extensions.sh
+source ./steps/step_mackup.sh
+source ./steps/step_config.sh
+source ./steps/step_macos_dock.sh
 
 # if [[ $# < 1 ]]; then
 # 	usage

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "assas"
+echo $0
+
 SOURCE_DIR=src
 BUILD_DIR=build
 
@@ -9,11 +12,15 @@ fi
 
 echo "Consolidating configuration resources"
 export TMPDIR=$(mktemp -d payload.XXXXXXXX)
+mkdir $TMPDIR/utils
+mkdir $TMPDIR/steps
 
 #cp Source/RUNme.sh payload/
 # cp -r $SOURCE_DIR/general/ $TMPDIR/
 # cp $TMPDIR/keys/* $TMPDIR/
 cp -f $SOURCE_DIR/$1/* $TMPDIR/
+cp -f $SOURCE_DIR/$1/utils/* $TMPDIR/utils/
+cp -f $SOURCE_DIR/$1/steps/* $TMPDIR/steps/
 tar cf $BUILD_DIR/$TMPDIR.tar $TMPDIR/*
 cd $BUILD_DIR/
 echo "Creating Self Extracting Bash Deployable"
