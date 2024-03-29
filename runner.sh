@@ -5,6 +5,9 @@ export TMPDIR=$(mktemp -d /tmp/selfextract.XXXXXX)
 echo "Temporary directory created: $TMPDIR"
 
 echo "\nExtracting Server Config:"
+echo "111"
+echo "$0"
+echo "222"
 ARCHIVE=$(awk '/^enter_yo_mama/ {print NR + 1; exit 0; }' $0)
 tail -n+$ARCHIVE $0 | tar xzv -C $TMPDIR
 CDIR=$(pwd)
