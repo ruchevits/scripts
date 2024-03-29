@@ -344,13 +344,22 @@ else
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 fi
 
-# Install powerlevel10k theme
+########################################################################################################################
+
+print_step_info "Installing zsh theme"
+
 brew_install powerlevel10k
 BREW_INSTALLED_POWERLEVEL10K=$?
 
 # Link powerlevel10k theme
 # https://unix.stackexchange.com/questions/207294/create-symlink-overwrite-if-one-exists
 ln -sfn "/usr/local/share/powerlevel10k/powerlevel10k.zsh-theme" ~/.oh-my-zsh/custom/themes/powerlevel10k.zsh-theme
+
+brew_cleanup $(($BREW_INSTALLED_POWERLEVEL10K))
+
+########################################################################################################################
+
+print_step_info "Installing zsh plugins"
 
 # Install zsh plugins
 install_zsh_plugin zsh-autosuggestions "https://github.com/zsh-users/zsh-autosuggestions"
@@ -360,7 +369,7 @@ install_zsh_plugin zsh-syntax-highlighting "https://github.com/zsh-users/zsh-syn
 brew_install chroma
 BREW_INSTALLED_CHROMA=$?
 
-brew_cleanup $(($BREW_INSTALLED_POWERLEVEL10K | $BREW_INSTALLED_CHROMA))
+brew_cleanup $(($BREW_INSTALLED_CHROMA))
 
 ########################################################################################################################
 
