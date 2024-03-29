@@ -1,5 +1,8 @@
 #!/bin/zsh
 
+# https://stackoverflow.com/questions/314675/how-to-redirect-output-of-an-entire-shell-script-within-the-script-itself
+# exec > >(tee -a "setup.log") 2>&1
+
 HOMEBREW_NO_ENV_HINTS=1
 
 ########################################################################################################################
@@ -27,10 +30,24 @@ function print_intro() {
     print_line_blue "  |  _ <  | |_| | | (__  | | | | |  __/  \ V /  | | | |_  \__ \  "
     print_line_blue "  |_| \_\  \__,_|  \___| |_| |_|  \___|   \_/   |_|  \__| |___/  "
     print_line_blue "                                                                 "
-    print_line_blue "       |\/|  _   _    _  _ |_      _     _  _  _ .  _  |_        "
-    print_line_blue "       |  | (_| (_   _) (- |_ |_| |_)   _) (_ |  | |_) |_        "
-    print_line_blue "                                  |                |             "
-    # print_line_blue "-----------------------------------------------------------------"
+    print_line_blue "-----------------------------------------------------------------"
+    print_line_blue ""
+    print_line_blue "This script will:"
+    print_line_blue "- Install XCode developer tools"
+    print_line_blue "- Install and update Homebrew"
+    print_line_blue "- Install 1Password"
+    print_line_blue "- Install Git with some useful utilities"
+    print_line_blue "- Install fonts"
+    print_line_blue "- Install utilities"
+    print_line_blue "- Install Volta"
+    print_line_blue "- Install Node and PNPM via Volta"
+    print_line_blue "- Install Oh My Zsh with powerline10k theme and plugins"
+    print_line_blue "- Install iTerm2"
+    print_line_blue "- Install applications"
+    print_line_blue "- Install VSCode extensions"
+    print_line_blue "- Install Mackup"
+    print_line_blue "- Fetch Mackup configuration"
+    print_line_blue ""
 }
 
 function print_step_info() {
@@ -104,6 +121,23 @@ function brew_install_cask() {
 function brew_cleanup() {
     if [[ $1 == 1 ]]; then
         brew cleanup
+    fi
+}
+
+function install_zsh_plugin() {
+    if [ -d ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/$1 ]; then
+        echo "zsh plugin is already installed: $1"
+    else
+        git clone $2 ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/$1
+    fi
+}
+
+function install_vscode_extension() {
+    code --list-extensions | grep $1
+    if [[ $? == 0 ]]; then
+        echo "VSCode extension is already installed: $1"
+    else
+        code --install-extension $1
     fi
 }
 
@@ -204,7 +238,8 @@ if [[ $BREW_INSTALLED_1PASSWORD == 1 ]]; then
     MANUAL_ACTION_1PASSWORD=(
         "Sign in to 1Password app"
         "Go to 1Password \\u2192 Settings \\u2192 Developer"
-        "Tick checkboxes 'Use the SSH agent' and 'Integrate with 1Password CLI'"
+        "Tick checkbox 'Use the SSH agent' and allow 1Password to update ~/.ssh/config file"
+        "Tick checkbox 'Integrate with 1Password CLI'"
     )
     print_manual_action_required ${MANUAL_ACTION_1PASSWORD[@]}
 fi
@@ -271,26 +306,17 @@ brew_cleanup $(($BREW_INSTALLED_TREE | $BREW_INSTALLED_WGET | $BREW_INSTALLED_TR
 
 print_step_info "Installing Volta"
 
-# Install Volta (https://volta.sh/)
-if [[ $+commands[volta] != 0 ]]; then
+which ~/.volta/bin/volta &>/dev/null
+if [[ $? == 0 ]]; then
     echo "Already installed"
 else
+    # https://volta.sh/
     curl https://get.volta.sh | bash -s -- --skip-setup
-
-    # # Only write if no existing .zshrc to sync!
-    # WRITE_ZSHRC_VOLTA=(
-    #     "# Volta"
-    #     "export VOLTA_HOME=\"$HOME/.volta\""
-    #     "export VOLTA_FEATURE_PNPM=\"1\""
-    #     "export PATH=\"\$VOLTA_HOME/bin:\$PATH\""
-    # )
-    # write_zshrc "${WRITE_ZSHRC_VOLTA[@]}"
-
-    export VOLTA_HOME="$HOME/.volta"
-    # export VOLTA_FEATURE_PNPM="1"
-    export PATH="$VOLTA_HOME/bin:$PATH"
-
 fi
+
+export VOLTA_HOME="$HOME/.volta"
+# export VOLTA_FEATURE_PNPM="1"
+export PATH="$VOLTA_HOME/bin:$PATH"
 
 ########################################################################################################################
 
@@ -310,23 +336,33 @@ volta install pnpm
 
 print_step_info "Installing Oh My ZSH"
 
-# TODO: verify unattended works well
 # Install Oh My Zsh
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+if [ -d ~/.oh-my-zsh ]; then
+    echo "Already installed"
+else
+    # TODO: verify unattended works well
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+fi
 
 # Install powerlevel10k theme
 brew_install powerlevel10k
 BREW_INSTALLED_POWERLEVEL10K=$?
 
-ln -s "/usr/local/share/powerlevel10k/powerlevel10k.zsh-theme" ~/.oh-my-zsh/custom/themes/powerlevel10k.zsh-theme
+# Link powerlevel10k theme
+# https://unix.stackexchange.com/questions/207294/create-symlink-overwrite-if-one-exists
+ln -sfn "/usr/local/share/powerlevel10k/powerlevel10k.zsh-theme" ~/.oh-my-zsh/custom/themes/powerlevel10k.zsh-theme
 
 # Install zsh plugins
-git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-git clone https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+install_zsh_plugin zsh-autosuggestions "https://github.com/zsh-users/zsh-autosuggestions"
+install_zsh_plugin zsh-syntax-highlighting "https://github.com/zsh-users/zsh-syntax-highlighting"
 
 # Syntax hightlighting tool (needed for zsh colorize plugin)
 brew_install chroma
 BREW_INSTALLED_CHROMA=$?
+
+brew_cleanup $(($BREW_INSTALLED_POWERLEVEL10K | $BREW_INSTALLED_CHROMA))
+
+########################################################################################################################
 
 # Install iTerm2
 print_step_info "Installing iTerm2"
@@ -337,7 +373,7 @@ BREW_INSTALLED_ITERM2=$?
 brew_install "TomAnthony/brews/itermocil"
 BREW_INSTALLED_ITERMOCIL=$?
 
-brew_cleanup $(($BREW_INSTALLED_POWERLEVEL10K | $BREW_INSTALLED_CHROMA | $BREW_INSTALLED_ITERM2 | $BREW_INSTALLED_ITERMOCIL))
+brew_cleanup $(($$BREW_INSTALLED_ITERM2 | $BREW_INSTALLED_ITERMOCIL))
 
 ########################################################################################################################
 
@@ -403,7 +439,7 @@ VSCODE_EXTENSIONS=(
 
 if [[ $+commands[code] != 0 ]]; then
     for i in "${VSCODE_EXTENSIONS[@]}"; do
-        code --install-extension $i
+        install_vscode_extension $i
     done
 fi
 
