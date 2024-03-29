@@ -53,6 +53,7 @@ function print_step_info() {
     print_line_blue "                                                                 "
     print_line_blue "-----------------------------------------------------------------"
     print_line_green "\n$1\n"
+    read -s -k $'?Press any key to continue.\n'
 }
 
 function print_manual_action_required() {
