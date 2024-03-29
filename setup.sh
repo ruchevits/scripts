@@ -520,7 +520,8 @@ function step_macos_dock() {
     dock_add_app static-apps "/Applications/Spotify.app"
     # dock_add_app static-apps "/Applications/VLC.app"
 
-    dock_add_spacer static-apps flex-spacer-tile
+    # dock_add_spacer static-apps flex-spacer-tile
+    dock_add_spacer static-apps spacer-tile
 
     dock_add_app static-apps "/Applications/Utilities/iTerm.app"
 
@@ -543,7 +544,8 @@ function step_macos_dock() {
     dock_add_app static-apps "/Applications/RapidAPI.app"
     dock_add_app static-apps "/Applications/Visual Studio Code.app"
 
-    dock_add_spacer static-apps flex-spacer-tile
+    # dock_add_spacer static-apps flex-spacer-tile
+    dock_add_spacer static-apps spacer-tile
 
     dock_add_directory static-others /Users/johndoe/Downloads/
     # dock_add_directory static-others "/Users/johndoe/Library/CloudStorage/GoogleDrive-ruchevits@gmail.com"
