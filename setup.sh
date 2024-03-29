@@ -47,7 +47,6 @@ function print_intro() {
     print_line_blue "- Install VSCode extensions"
     print_line_blue "- Install Mackup"
     print_line_blue "- Fetch Mackup configuration"
-    print_line_blue ""
 }
 
 function print_step_info() {
@@ -361,13 +360,13 @@ brew_cleanup $(($BREW_INSTALLED_POWERLEVEL10K))
 
 print_step_info "Installing zsh plugins"
 
-# Install zsh plugins
-install_zsh_plugin zsh-autosuggestions "https://github.com/zsh-users/zsh-autosuggestions"
-install_zsh_plugin zsh-syntax-highlighting "https://github.com/zsh-users/zsh-syntax-highlighting"
-
 # Syntax hightlighting tool (needed for zsh colorize plugin)
 brew_install chroma
 BREW_INSTALLED_CHROMA=$?
+
+# Install zsh plugins
+install_zsh_plugin zsh-autosuggestions "https://github.com/zsh-users/zsh-autosuggestions"
+install_zsh_plugin zsh-syntax-highlighting "https://github.com/zsh-users/zsh-syntax-highlighting"
 
 brew_cleanup $(($BREW_INSTALLED_CHROMA))
 
@@ -467,6 +466,11 @@ brew_cleanup $(($BREW_INSTALLED_MACKUP))
 
 print_step_info "Fetching Mackup configuration"
 
+if [ -d ~/Mackup ]; then
+    echo "Mackup directory already exists: deleting"
+    rm -rf ~/Mackup
+fi
+
 git clone git@github.com:ruchevits/setup-macos.git ~/Mackup
 
 # TODO: refactor
@@ -497,6 +501,8 @@ if [[ $+commands[mackup] != 0 ]]; then
 fi
 
 ########################################################################################################################
+
+print_step_info "Configuring MacOS Dock"
 
 # Configure dock (https://developer.apple.com/documentation/devicemanagement/dock)
 
