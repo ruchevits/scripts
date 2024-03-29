@@ -467,15 +467,19 @@ brew_cleanup $(($BREW_INSTALLED_MACKUP))
 
 print_step_info "Fetching Mackup configuration"
 
-if [ -d ~/Mackup ]; then
-    echo "Mackup directory already exists: deleting"
-    rm -rf ~/Mackup
-fi
+# Symlink
+if [[ $+commands[mackup] != 0 ]]; then
 
-git clone git@github.com:ruchevits/setup-macos.git ~/Mackup
+    if [ -d ~/Mackup ]; then
+        echo "Existing Mackup directory found\n"
+        mackup uninstall -f
+        rm -rf ~/Mackup
+    fi
 
-# TODO: refactor
-echo "[storage]
+    git clone git@github.com:ruchevits/setup-macos.git ~/Mackup
+
+    # TODO: refactor
+    echo "[storage]
 engine = file_system
 path =
 directory = Mackup
@@ -495,8 +499,6 @@ aws
 postico
 vscode" >~/.mackup.cfg
 
-# Symlink
-if [[ $+commands[mackup] != 0 ]]; then
     mackup restore -f
     # mackup uninstall
 fi
