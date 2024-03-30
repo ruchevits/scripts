@@ -47,7 +47,7 @@ print_intro
 
 if [ -z "$1" ]; then
     print_step_info step_xcode "Installing XCode developer tools"
-    print_step_info step_homebrew "Installing Homebrew"
+    # print_step_info step_homebrew "Installing Homebrew"
     # print_step_info step_1password "Installing 1Password"
     # print_step_info step_git "Installing Git"
     # print_step_info step_fonts "Installing fonts"

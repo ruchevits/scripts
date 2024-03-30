@@ -24,7 +24,7 @@ if [ -e "$tmpDir.tar" ]; then
 		DATE=$(date +%Y%m%d%H%M%S)
 		FILE=$1
 		# FILE=$1_$DATE
-		cat ../runner.sh $tmpDir.tar.gz >$FILE.bsx
+		cat ../src/runner.sh $tmpDir.tar.gz >$FILE.bsx
 		echo "... DONE!"
 	else
 		echo "$tmpDir.tar.gz does not exist"
