@@ -35,6 +35,7 @@ steps=(
     step_zsh_plugins
     step_iterm2
     step_applications
+    step_aws
     step_vscode_extensions
     step_mackup
     step_config
