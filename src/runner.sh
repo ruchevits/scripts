@@ -47,6 +47,8 @@ printf "\033[30;1m"
 tail -n+$dataArchive $0 | tar xzv -C $tmpDir
 printf "\033[0m"
 
+curDir=$(pwd)
+
 cd $tmpDir
 cp -r payload.*/ .
 rm -rf payload.*/
