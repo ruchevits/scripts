@@ -50,3 +50,7 @@ else
 fi
 
 print_done
+
+# TODO: add the following
+# 1Password browser extensions (see: https://github.com/joshukraine/dotfiles/blob/master/brew/Brewfile)
+#
