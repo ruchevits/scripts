@@ -10,7 +10,7 @@ function step_git() {
         "git-extras" # Small git utilities (https://github.com/tj/git-extras/blob/main/Commands.md)
     )
     for pkg in "${pkgs[@]}"; do
-        brew_install $step
+        brew_install $pkg
         brew_cleanup_needed=$((brew_cleanup_needed | $?))
     done
 
