@@ -52,5 +52,9 @@ fi
 print_done
 
 # TODO: add the following
-# 1Password browser extensions (see: https://github.com/joshukraine/dotfiles/blob/master/brew/Brewfile)
-#
+# 1Password browser extensions (see: https://github.com/joshukraine/dotfiles/blob/master/brew/Brewfile, https://github.com/mas-cli/mas)
+# diff-so-fancy (https://github.com/so-fancy/diff-so-fancy)
+# vite
+# rust, cargo
+# GNU GCC, LLVM's Clang
+# zoom?
