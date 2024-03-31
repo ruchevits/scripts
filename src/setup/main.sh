@@ -1,11 +1,6 @@
 #!/bin/zsh
 
-source ./utils/utils_colours.sh
-source ./utils/utils_brew.sh
-source ./utils/utils_zsh.sh
-source ./utils/utils_vscode.sh
-source ./utils/utils_dock.sh
-
+source ./utils.sh
 source ./steps/step_xcode.sh
 source ./steps/step_homebrew.sh
 source ./steps/step_1password.sh
@@ -24,8 +19,6 @@ source ./steps/step_vscode_extensions.sh
 source ./steps/step_mackup.sh
 source ./steps/step_config.sh
 source ./steps/step_macos_dock.sh
-
-HOMEBREW_NO_ENV_HINTS=1
 
 steps=(
     step_xcode

@@ -1,5 +1,13 @@
 #!/bin/bash
 
+function install_zsh_plugin() {
+    if [ -d ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/$1 ]; then
+        echo "Zsh plugin is already installed: $1"
+    else
+        git clone $2 ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/$1
+    fi
+}
+
 function step_zsh_plugins() {
     print_step_info "Installing Zsh plugins"
 

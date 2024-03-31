@@ -1,5 +1,14 @@
 #!/bin/bash
 
+required_fns=(
+    print_step_info
+    require_manual_action
+    brew_install
+    brew_install_cask
+    brew_cleanup
+)
+ensure_fns_available $required_fns
+
 function step_1password() {
     print_step_info "Installing 1Password"
 
@@ -23,6 +32,6 @@ function step_1password() {
             "Tick checkbox 'Use the SSH agent' and allow 1Password to update ~/.ssh/config file"
             "Tick checkbox 'Integrate with 1Password CLI'"
         )
-        print_manual_action_required ${steps[@]}
+        require_manual_action ${steps[@]}
     fi
 }

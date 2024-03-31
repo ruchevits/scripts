@@ -38,3 +38,13 @@ printf '%s\n' "$var" | od -c
 {
     echo "foobar"
 } &>/dev/null
+
+function write_zshrc() {
+    echo \\nWriting to .zshrc:
+    echo "" >>~/.zshrc
+    instructions=("$@")
+    for i in "${instructions[@]}"; do
+        echo "$i" >>~/.zshrc
+        touch ~/.zshrc
+    done
+}

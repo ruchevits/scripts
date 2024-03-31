@@ -14,5 +14,5 @@ function step_xcode() {
     steps=(
         "Install XCode"
     )
-    print_manual_action_required "${steps[@]}"
+    require_manual_action "${steps[@]}"
 }

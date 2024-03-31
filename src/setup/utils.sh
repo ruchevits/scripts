@@ -1,10 +1,26 @@
 #!/bin/zsh
 
+terminalWidth=$(tput cols)
+
 function clear_last_line() {
     tput cuu 1 && tput el
 }
 
-terminalWidth=$(tput cols)
+function ensure_fns_available() {
+    some_fns_unavailable=0
+    for fn in $@; do
+        declare -f -F $fn >/dev/null
+        is_fn_available=$?
+        some_fns_unavailable=$((some_fns_unavailable | $is_fn_available))
+        if [[ $is_fn_available == 1 ]]; then
+            printf "\033[31;1m%s\033[0m\n" "Required function not available: $fn"
+        fi
+    done
+    if [[ $some_fns_unavailable == 1 ]]; then
+        exit 1
+    fi
+}
+
 function printf_separator() {
     printf "\n\033[34;1m"
     for i in $(eval echo {1..$terminalWidth}); do
@@ -55,7 +71,7 @@ function print_step_info() {
     # read -s -k $'?Press any key to continue\n\n'
 }
 
-function print_manual_action_required() {
+function require_manual_action() {
     manualActionWarningPrintFmt="\n\033[33;1m%s\033[0m\n"
     manualActionListPrintFmt="\033[33;1mx %s\033[0m\n"
     manualActionPromptPrintFmt="\n\033[35;1m%s\033[0m\n\n"
