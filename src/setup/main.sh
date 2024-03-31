@@ -58,3 +58,8 @@ print_done
 # rust, cargo
 # GNU GCC, LLVM's Clang
 # zoom?
+
+################################################################################
+
+# Manual steps:
+# Hammerspoon - enable Accessibility

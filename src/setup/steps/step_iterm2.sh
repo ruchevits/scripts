@@ -12,5 +12,9 @@ function step_iterm2() {
     brew_install "TomAnthony/brews/itermocil"
     brew_cleanup_needed=$((brew_cleanup_needed | $?))
 
+    # Load preferences from a custom folder
+    defaults write com.googlecode.iterm2 "PrefsCustomFolder" -string "~/.config/iterm2/Preferences"
+    defaults write com.googlecode.iterm2 "LoadPrefsFromCustomFolder" -bool true
+
     brew_cleanup $brew_cleanup_needed
 }
