@@ -15,6 +15,7 @@ source ./steps/step_zsh_theme.sh
 source ./steps/step_zsh_plugins.sh
 source ./steps/step_iterm2.sh
 source ./steps/step_applications.sh
+source ./steps/step_aws.sh
 source ./steps/step_vscode_extensions.sh
 source ./steps/step_mackup.sh
 source ./steps/step_config.sh
