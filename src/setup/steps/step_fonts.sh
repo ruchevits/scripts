@@ -11,7 +11,6 @@ function step_fonts() {
     # https://github.com/Homebrew/homebrew-cask-fonts/tree/master/Casks
     fonts=(
         "font-meslo-lg-nerd-font"
-        "git-extras"
     )
     for font in "${fonts[@]}"; do
         brew_install_cask homebrew/cask-fonts/$font
