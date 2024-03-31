@@ -1,23 +1,23 @@
 #!/bin/bash
 
 function step_utilities() {
-    brew_install tree
-    BREW_INSTALLED_TREE=$?
+    print_step_info "Installing utilities"
 
-    brew_install wget
-    BREW_INSTALLED_WGET=$?
+    brew_cleanup_needed=0
 
-    brew_install trash
-    BREW_INSTALLED_TRASH=$?
+    pkgs=(
+        "tree"           # Display directories as trees (with optional color/HTML output)
+        "wget"           # Internet file retriever
+        "trash"          # CLI tool that moves files or folder to the trash
+        "openssl@3"      # Cryptography and SSL/TLS Toolkit
+        "sqlite"         # Command-line interface for SQLite
+        "xz"             # General-purpose data compression with high compression ratio
+        "defaultbrowser" # Command-line tool for getting & setting the default browser
+    )
+    for pkg in "${pkgs[@]}"; do
+        brew_install $pkg
+        brew_cleanup_needed=$((brew_cleanup_needed | $?))
+    done
 
-    brew_install openssl@3
-    BREW_INSTALLED_OPENSSL=$?
-
-    brew_install sqlite
-    BREW_INSTALLED_SQLITE=$?
-
-    brew_install xz
-    BREW_INSTALLED_XZ=$?
-
-    brew_cleanup $(($BREW_INSTALLED_TREE | $BREW_INSTALLED_WGET | $BREW_INSTALLED_TRASH | $BREW_INSTALLED_OPENSSL | $BREW_INSTALLED_SQLITE | $BREW_INSTALLED_XZ))
+    brew_cleanup $brew_cleanup_needed
 }

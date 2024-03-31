@@ -1,6 +1,7 @@
 #!/bin/bash
 
 function step_macos_dock() {
+    print_step_info "Configuring MacOS Dock"
 
     # Configure dock (https://developer.apple.com/documentation/devicemanagement/dock)
 

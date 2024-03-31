@@ -1,19 +1,19 @@
 #!/bin/bash
 
 function step_git() {
-    brew_install "git"
-    BREW_INSTALLED_GIT=$?
+    print_step_info "Installing Git"
 
-    # https://github.com/tj/git-extras/blob/main/Commands.md
-    brew_install git-extras
-    BREW_INSTALLED_GIT_EXTRAS=$?
+    brew_cleanup_needed=0
 
-    brew_install tree
-    BREW_INSTALLED_TREE=$?
+    pkgs=(
+        "git"        # Distributed revision control system
+        "git-extras" # Small git utilities (https://github.com/tj/git-extras/blob/main/Commands.md)
+    )
+    for pkg in "${pkgs[@]}"; do
+        brew_install $step
+        brew_cleanup_needed=$((brew_cleanup_needed | $?))
+    done
 
-    brew_install defaultbrowser
-    BREW_INSTALLED_DEFAULTBROWSER=$?
-
-    brew_cleanup $(($BREW_INSTALLED_GIT | $BREW_INSTALLED_GIT_EXTRAS | $BREW_INSTALLED_TREE | $BREW_INSTALLED_DEFAULTBROWSER))
+    brew_cleanup $brew_cleanup_needed
 
 }

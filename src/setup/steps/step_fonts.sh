@@ -2,11 +2,21 @@
 
 # TODO: install more fonts!
 function step_fonts() {
+    print_step_info "Installing fonts"
+
+    brew_cleanup_needed=0
+
     brew tap homebrew/cask-fonts
 
     # https://github.com/Homebrew/homebrew-cask-fonts/tree/master/Casks
-    brew_install_cask homebrew/cask-fonts/font-meslo-lg-nerd-font
-    BREW_INSTALLED_FONT_MESLO_LG_NERD_FONT=$?
+    fonts=(
+        "font-meslo-lg-nerd-font"
+        "git-extras"
+    )
+    for font in "${fonts[@]}"; do
+        brew_install_cask homebrew/cask-fonts/$font
+        brew_cleanup_needed=$((brew_cleanup_needed | $?))
+    done
 
-    # TODO: brew_cleanup?
+    brew_cleanup $brew_cleanup_needed
 }

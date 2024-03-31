@@ -1,15 +1,18 @@
 #!/bin/bash
 
 function step_xcode() {
+    print_step_info "Installing XCode developer tools"
+
     xcode-select -p &>/dev/null
     if [[ $? == 0 ]]; then
         echo "Already installed"
-    else
-        xcode-select --install
-        MANUAL_STEP_XCODE_SETUP=(
-            "Install XCode"
-        )
-        print_manual_action_required "${MANUAL_STEP_XCODE_SETUP[@]}"
+        return
     fi
 
+    xcode-select --install
+
+    steps=(
+        "Install XCode"
+    )
+    print_manual_action_required "${steps[@]}"
 }

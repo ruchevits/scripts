@@ -15,7 +15,7 @@ function printf_separator() {
 
 function print_intro() {
     asciiArtPrintFmt="\033[34;1m%s\033[0m\n"
-    scriptDescriptionPrintFmt="\033[34;1m%s\033[0m\n\n"
+    scriptDescriptionPrintFmt="\033[34;1m%s\033[0m\n"
     blueLinesListPrintFmt="\033[34;1mx %s\033[0m\n"
 
     printf $asciiArtPrintFmt \
@@ -30,37 +30,29 @@ function print_intro() {
     printf $scriptDescriptionPrintFmt \
         "This is a MacOS environment setup and configuration script."
 
-    printf $blueLinesListPrintFmt \
-        "Install XCode developer tools" \
-        "Install and update Homebrew" \
-        "Install 1Password" \
-        "Install Git with some useful utilities" \
-        "Install fonts" \
-        "Install utilities" \
-        "Install Volta" \
-        "Install Node and PNPM via Volta" \
-        "Install Oh My Zsh with powerline10k theme and plugins" \
-        "Install iTerm2" \
-        "Install applications" \
-        "Install VSCode extensions" \
-        "Install Mackup" \
-        "Fetch Mackup configuration"
+    # printf $blueLinesListPrintFmt \
+    #     "Install XCode developer tools" \
+    #     "Install and update Homebrew" \
+    #     "Install 1Password" \
+    #     "Install Git with some useful utilities" \
+    #     "Install fonts" \
+    #     "Install utilities" \
+    #     "Install Volta" \
+    #     "Install Node and PNPM via Volta" \
+    #     "Install Oh My Zsh with powerline10k theme and plugins" \
+    #     "Install iTerm2" \
+    #     "Install applications" \
+    #     "Install VSCode extensions" \
+    #     "Install Mackup" \
+    #     "Fetch Mackup configuration"
 }
 
 function print_step_info() {
-    separatorPrintFmt="\033[34;1m%s\033[0m\n\n"
-    stepInfoPrintFmt="\033[32;1m%s\033[0m\n\n"
-
     printf_separator
-
-    if [ ! -z "$2" ]; then
-        printf $stepInfoPrintFmt $2
+    if [ ! -z "$1" ]; then
+        printf "\033[32;1m%s\033[0m\n\n" $1
     fi
     # read -s -k $'?Press any key to continue\n\n'
-    $1
-
-    steps=("one" "two" "three")
-    print_manual_action_required $steps
 }
 
 function print_manual_action_required() {

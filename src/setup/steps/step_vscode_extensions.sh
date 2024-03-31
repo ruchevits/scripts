@@ -1,13 +1,18 @@
 #!/bin/bash
 
 function step_vscode_extensions() {
-    VSCODE_EXTENSIONS=(
+    print_step_info "Installing VSCode extensions"
+
+    # If VSCode CLI is not found
+    if [[ $+commands[code] == 0 ]]; then
+        return
+    fi
+
+    vscode_extensions=(
         "esbenp.prettier-vscode"
     )
 
-    if [[ $+commands[code] != 0 ]]; then
-        for i in "${VSCODE_EXTENSIONS[@]}"; do
-            install_vscode_extension $i
-        done
-    fi
+    for i in "${vscode_extensions[@]}"; do
+        install_vscode_extension $i
+    done
 }

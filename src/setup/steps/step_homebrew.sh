@@ -1,6 +1,8 @@
 #!/bin/bash
 
 function step_homebrew() {
+    print_step_info "Installing Homebrew"
+
     if [[ $+commands[brew] != 0 ]]; then
         echo "Already installed"
     else

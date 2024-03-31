@@ -1,6 +1,8 @@
 #!/bin/bash
 
 function step_config() {
+    print_step_info "Fetching configuration"
+
     if [[ $+commands[mackup] != 0 ]]; then
         if [ -d ~/Mackup ]; then
             echo "Existing Mackup directory found\n"

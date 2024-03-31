@@ -1,6 +1,8 @@
 #!/bin/bash
 
 function step_volta() {
+    print_step_info "Installing Volta"
+
     which ~/.volta/bin/volta &>/dev/null
     if [[ $? == 0 ]]; then
         echo "Already installed"
