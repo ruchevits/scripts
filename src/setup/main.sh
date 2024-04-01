@@ -16,6 +16,7 @@ source ./steps/step_zsh_plugins.sh
 source ./steps/step_iterm2.sh
 source ./steps/step_applications.sh
 source ./steps/step_aws.sh
+source ./steps/step_terraform.sh
 source ./steps/step_vscode_extensions.sh
 source ./steps/step_mackup.sh
 source ./steps/step_config.sh
@@ -37,6 +38,7 @@ steps=(
     step_iterm2
     step_applications
     step_aws
+    step_terraform
     step_vscode_extensions
     step_mackup
     step_config
@@ -54,7 +56,10 @@ fi
 print_done
 
 # TODO: add the following
+# mkdir ~/Projects
 # 1Password browser extensions (see: https://github.com/joshukraine/dotfiles/blob/master/brew/Brewfile, https://github.com/mas-cli/mas)
+
+# TODO maybe:
 # diff-so-fancy (https://github.com/so-fancy/diff-so-fancy)
 # vite
 # rust, cargo

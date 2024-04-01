@@ -19,6 +19,7 @@ function step_vscode_extensions() {
 
     vscode_extensions=(
         "esbenp.prettier-vscode"
+        "hashicorp.terraform"
     )
 
     for i in "${vscode_extensions[@]}"; do

@@ -5,4 +5,6 @@ function step_javascript() {
 
     volta install node
     volta install pnpm
+    volta install serverless
+    volta install vercel
 }
