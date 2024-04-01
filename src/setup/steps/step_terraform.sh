@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function step_terraform() {
-    print_step_info "Installing AWS CLI"
+    print_step_info "Installing Terraform"
 
     brew tap hashicorp/tap
 

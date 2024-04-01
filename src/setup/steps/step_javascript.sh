@@ -7,4 +7,5 @@ function step_javascript() {
     volta install pnpm
     volta install serverless
     volta install vercel
+    volta install vite
 }

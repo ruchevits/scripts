@@ -29,7 +29,7 @@ steps=(
     step_git
     step_fonts
     step_utilities
-    # step_python
+    step_python
     step_volta
     step_javascript
     step_omz
