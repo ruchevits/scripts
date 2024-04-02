@@ -17,8 +17,10 @@ function step_vscode_extensions() {
         return
     fi
 
-    # bierner.markdown-preview-github-styles
+    # javascript
     # bradlc.vscode-tailwindcss
+
+    # bierner.markdown-preview-github-styles
     # christian-kohler.npm-intellisense
     # christian-kohler.path-intellisense
     # chrmarti.regex
@@ -45,11 +47,12 @@ function step_vscode_extensions() {
     # rust-lang.rust-analyzer
     # rvest.vs-code-prettier-eslint
     # thang-nm.catppuccin-perfect-icons
-    # vscode-icons-team.vscode-icons
     # vue.volar
     # yoavbls.pretty-ts-errors
 
     vscode_extensions=(
+        "miguelsolorio.fluent-icons"     # UI icons
+        "vscode-icons-team.vscode-icons" # file explorer icons
         "esbenp.prettier-vscode"
         "hashicorp.terraform"
     )
